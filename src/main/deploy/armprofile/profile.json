@@ -1,0 +1,121 @@
+[
+  {
+  "profile": "STOW_L3",
+  "mechanisms": {
+    "WRIST": [0, 120, 120, 187],
+    "EXTEND": [0, 8, 15, 15],
+    "SHOULDER": [0, 59, 59, 59]
+    }
+  },
+  {
+    "profile": "L3_STOW",
+  "mechanisms": {
+    "WRIST": [187, 120, 120, 0],
+    "EXTEND": [15, 15, 8, 0.2],
+    "SHOULDER": [59, 59, 59, 0]
+  }
+
+  },
+  {
+    "profile": "L3_SCORE",
+  "mechanisms": {
+    "WRIST": [191, 191, 0],
+    "EXTEND": [15, 8, 0.5],
+    "SHOULDER": [59, 59, 0]
+  }
+  },
+  {
+  "profile": "STOW_L2",
+  "mechanisms": {
+    "WRIST": [0, 65, 195],
+    "EXTEND": [0, 6.2, 6.2],
+    "SHOULDER": [0, 50, 54]
+  }
+  },
+  {
+    "profile": "L2_STOW",
+    "mechanisms": {
+    "WRIST": [195, 55, 0],
+    "EXTEND": [6.2, 6.2, 0.2],
+    "SHOULDER": [54, 54, 0]
+  }
+  }, 
+  {
+    "profile": "L2_SCORE",
+    "mechanisms": {
+    "WRIST": [195, 195, 0],
+    "EXTEND": [6.2, 0.5, 0.5],
+    "SHOULDER": [54, 52,0]
+  }
+  },
+  {
+  "profile": "L2_L3",
+  "mechanisms": {
+    "WRIST": [195, 85, 120, 191],
+    "EXTEND": [6.2, 6.2, 15, 15],
+    "SHOULDER": [65, 59, 59, 59]
+  }
+  },
+
+
+  {
+    "profile": "L3_L2",
+    "mechanisms": {
+    "WRIST": [191, 120, 85, 195],
+    "EXTEND": [15, 15, 6.2, 6.2],
+    "SHOULDER": [59, 59, 59, 54]
+  }
+  },
+
+
+{
+    "profile": "STOW_CONEINTAKE",
+    "mechanisms": {
+    "WRIST": [0, 140],
+    "EXTEND": [0, 0],
+    "SHOULDER": [0, 0]
+  }
+  },
+  {
+    "profile": "STOW_CUBEINTAKE",
+    "mechanisms": {
+    "WRIST": [0, 131],
+    "EXTEND": [0, 0],
+    "SHOULDER": [-2, -2]
+  }
+  },
+{
+    "profile": "CUBEINTAKE_STOW",
+    "mechanisms": {
+    "WRIST": [131, 0],
+    "EXTEND": [0, 0],
+    "SHOULDER": [-2, -2]
+  }
+  },
+  {
+    "profile": "CONEINTAKE_STOW",
+    "mechanisms": {
+    "WRIST": [140, 0],
+    "EXTEND": [0, 0],
+    "SHOULDER": [-2, -2]
+  }
+  },
+{
+    "profile": "CUBEINTAKE_CONEINTAKE",
+    "mechanisms": {
+    "WRIST": [131, 140],
+    "EXTEND": [0, 0],
+    "SHOULDER": [-2, -2]
+  }
+  },
+  {
+    "profile": "CONEINTAKE_CUBEINTAKE",
+    "mechanisms": {
+    "WRIST": [140, 131],
+    "EXTEND": [0, 0],
+    "SHOULDER": [-2, -2]
+  }
+  }
+]
+  
+  
