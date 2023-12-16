@@ -20,7 +20,7 @@ Edwin had a 2.5 game piece auto on the clean side of the field and a 2 game piec
 - CANcoders for absolute positioning for swerve modules
 - NavX as gyro
 - SRX Mag Encoders for absolute positioning on the arm
-- Uses an OrangePi 5 for our Object detection
+- Uses an OrangePi 5 for our object detection
 
 ## Contributors
 Cris B., Christian F., Cordelia K., Chai M., Chris P., Lariza S., Kayla S.
