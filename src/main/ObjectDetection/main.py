@@ -1,48 +1,101 @@
-#!/usr/bin/env python3
+import cv2
+import time
+import cscore as cs
+import numpy as np
+
+
+from rknnpool import rknnPoolExecutor
+
+from frameProcessor import processFrames
 
 import ntcore
-import time
-from datetime import datetime
 
-class NetworkTable():
-    def __init__(self) -> None:
-        # Get the default instance of NetworkTables that was created automatically
-        # when the robot program starts
-        inst = ntcore.NetworkTableInstance.getDefault()
-        inst.startClient4("wpilibpi")
-        inst.setServer('10.54.6.2', 5810) #server_name (str), port
-        #inst.startDSClient() # Starts requesting server address from driver station This connects to the Driver Station running on localhost to obtain the server IP address.
+modelPath = "yolov7.rknn"
+TPEs = 3
 
-        # Get the table within that instance that contains the data. There can
-        # be as many tables as you like and exist to make it easier to organize
-        # your data. In this case, it's a table called datatable.
-        table = inst.getTable("datatable")
+class NetworkTables():
+    def __init__(self):
+        instance = ntcore.NetworkTableInstance.getDefault()
+        instance.setServer('10.54.6.2', 5810) #server_name (str), port (int)
+        instance.startClient4("5406")
+  
+        table = instance.getTable("orangepi")
 
-        # Start publishing topics within that table that correspond to the X and Y values
-        # for some operation in your program.
-        # The topic names are actually "/datatable/x" and "/datatable/y".
-        self.xPub = table.getStringTopic("time").publish()
-        #self.yPub = table.getDoubleTopic("y").publish()
+        self.jsonPublish = table.getStringTopic("json").publish()
+        self.coneCenter = table.getStringTopic("coneCenter").publish()
+        self.cubeCenter = table.getStringTopic("cubeCenter").publish()
+        self.foundCube = table.getStringTopic("foundCube").publish()
+        self.foundCone = table.getStringTopic("foundCone").publish()
 
-        #self.x = str(datetime.now())
-        #self.x = jsonData
-        #self.y = 0
-
-        while True:
-            self.x = str(datetime.now())
-            self.xPub.set(self.x)
-        #self.yPub.set(self.y)
+    def send(self, json):
+        instance = ntcore.NetworkTableInstance.getDefault()
+        self.jsonObject = str(json)
+        self.jsonPublish.set(self.jsonObject)
+        self.coneCenter.set(str(json["coneCenter"]))
+        self.cubeCenter.set(str(json["cubeCenter"]))
+        self.foundCube.set(str(json["foundCube"]))
+        self.foundCone.set(str(json["foundCone"]))
+        instance.flush()
 
 
-    def teleopPeriodic(self) -> None:
-        # Publish values that are constantly increasing.
-        while True:
-            self.xPub.set(self.x)
-            time.sleep(1)
-        #self.yPub.set(self.y)
-        #self.x += 0.05
-        #self.y += 1.0
+pool = rknnPoolExecutor(
+    rknnModel=modelPath,
+    TPEs=TPEs,
+    func=processFrames)
 
+NetworkTables()
+nt = NetworkTables()
 
-if __name__ == "__main__":
-    NetworkTable()
+camera = cs.UsbCamera("usbcam", 0)
+camera.setVideoMode(cs.VideoMode.PixelFormat.kMJPEG, 640, 480, 90)
+camera.getProperty("white_balance_temperature_auto").set(0)
+camera.setWhiteBalanceManual(4300)
+
+#fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+#out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (640, 640))
+
+cvsink = cs.CvSink("cvsink")
+cvsink.setSource(camera)
+cvSource = cs.CvSource("cvsource", cs.VideoMode.PixelFormat.kMJPEG, 160, 160, 30)
+
+mjpegServer = cs.MjpegServer("httpserver", 5800) 
+mjpegServer.setSource(cvSource)
+
+frame = np.zeros(shape=(640, 480, 3), dtype=np.uint8)
+
+while (not camera.isConnected()):
+    time.sleep(1)
+
+i=0
+if (camera.isConnected()):
+    while( i <= (TPEs + 1)):
+        ret, frame = cvsink.grabFrame(frame)
+        if not ret:
+            print("error:", cvsink.getError())
+            continue
+        else:
+            i+=1
+            pool.put(frame)
+
+frames, loopTime, initTime = 0, time.time(), time.time()
+while (True):
+    frames += 1
+    ret, frame = cvsink.grabFrame(frame)
+    if not ret:
+        continue
+    pool.put(frame)
+    result, flag = pool.get()
+    frame, jsonData = result
+    if flag == False:
+        break
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+    nt.send(jsonData)
+    cvSource.putFrame(frame)
+    if frames % 30 == 0:
+        print("30 frame average frame rate:\t", 30 / (time.time() - loopTime), "frames")
+        loopTime = time.time()
+
+print("Overall Average Frame rate\t", frames / (time.time() - initTime))
+#out.release() 	
+pool.release()

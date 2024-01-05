@@ -1,5 +1,5 @@
 # Celt-X-2023
-Team 5406's 2023 season cdebase for our competiton robot Edwin.
+Team 5406's 2023 season codebase for our competiton robot Edwin.
 
 ## Abilities
 Edwin had a 2.5 game piece auto on the clean side of the field and a 2 game piece, AI-assisted, auto on the cable protector side. It could pick up game pieces from the floor and single substation and score them anywhere on the grid, with the help of vision.
